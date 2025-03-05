@@ -10,7 +10,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #ffe6f2; 
+            background-color: #f7c8d4; /* Nền màu nhạt hơn */
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
@@ -30,6 +30,8 @@
             height: 100%;
             transform-style: preserve-3d;
             transition: transform 1s ease-in-out;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Thêm bóng đổ */
         }
         .card.open {
             transform: rotateY(180deg);
@@ -38,8 +40,7 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
             backface-visibility: hidden;
             display: flex;
             align-items: center;
@@ -48,15 +49,17 @@
             font-weight: bold;
             text-align: center;
             padding: 10px;
+            box-sizing: border-box;
         }
         .card .back {
             transform: rotateY(180deg);
-            color: #880e4f;
+            color: #ffffff; /* Màu chữ của mặt sau */
             flex-direction: column;
             padding: 20px;
             opacity: 0;
             transition: opacity 1s ease-in-out 0.5s;
             position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Bóng đổ mạnh hơn cho mặt sau */
         }
         .card.open .back {
             opacity: 1;
@@ -102,6 +105,7 @@
             100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
         }
 
+        /* Responsive Styling */
         @media (max-width: 768px) {
             .card-container {
                 width: 90%;
@@ -194,36 +198,53 @@
 
     function randomizeCardColor() {
         const colors = [
-            {bg: "linear-gradient(135deg, #ff4081, #ff80ab)", text: "#ffffff", sparkle: "#ffffff", falling: "#ff4081"}, // Pink
-            {bg: "linear-gradient(135deg, #3bde6b, #1bba5e)", text: "#ffffff", sparkle: "#ffffff", falling: "#3bde6b"}, // Green
-            {bg: "linear-gradient(135deg, #ff9800, #ffeb3b)", text: "#000000", sparkle: "#000000", falling: "#ff9800"}, // Orange
-            {bg: "linear-gradient(135deg, #00bcd4, #03a9f4)", text: "#ffffff", sparkle: "#ffffff", falling: "#00bcd4"}, // Blue
-            {bg: "linear-gradient(135deg, #9c27b0, #e040fb)", text: "#ffffff", sparkle: "#ffffff", falling: "#9c27b0"}  // Purple
+            {base: "#ff66b2", text: "#ffffff", sparkle: "#ffffff", falling: "#ff66b2"}, // Pink
+            {base: "#4caf50", text: "#ffffff", sparkle: "#ffffff", falling: "#4caf50"}, // Green
+            {base: "#ff9100", text: "#000000", sparkle: "#000000", falling: "#ff9100"}, // Orange
+            {base: "#03a9f4", text: "#ffffff", sparkle: "#ffffff", falling: "#03a9f4"}, // Blue
+            {base: "#9c27b0", text: "#ffffff", sparkle: "#ffffff", falling: "#9c27b0"}  // Purple
         ];
 
         const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
-        document.querySelector(".card .front").style.background = randomColor.bg;
-        document.querySelector(".card .back").style.background = randomColor.bg;
+        // Apply to card background (màu thiệp)
+        document.querySelector(".card .front").style.backgroundColor = randomColor.base;
+        document.querySelector(".card .back").style.backgroundColor = randomColor.base;
 
-       
+        // Apply to text
         document.querySelector(".message").style.color = randomColor.text;
 
-     
+        // Apply to falling elements
         const fallingElements = document.querySelectorAll(".falling");
         fallingElements.forEach(element => {
             element.style.color = randomColor.falling;
         });
 
-
+        // Apply to sparkles
         const sparkles = document.querySelectorAll(".sparkle");
         sparkles.forEach(sparkle => {
             sparkle.style.background = randomColor.sparkle;
         });
 
-        document.body.style.background = randomColor.bg;
+        // Apply to body background (màu nền nhạt hơn so với thiệp)
+        const bgColor = lightenColor(randomColor.base, 0.2); // Làm nền nhạt hơn
+        document.body.style.backgroundColor = bgColor;
     }
 
+    // Function to lighten the color by a percentage
+    function lightenColor(color, percent) {
+        let r = parseInt(color.substr(1, 2), 16);
+        let g = parseInt(color.substr(3, 2), 16);
+        let b = parseInt(color.substr(5, 2), 16);
+
+        r = Math.min(255, r + (255 - r) * percent);
+        g = Math.min(255, g + (255 - g) * percent);
+        b = Math.min(255, b + (255 - b) * percent);
+
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // Randomize color when page loads
     randomizeCardColor();
 
     createFallingElements(20, "❤️");
